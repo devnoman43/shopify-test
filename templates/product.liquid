@@ -1,5 +1,89 @@
 {% layout "template.liquid" %}
 
+
 {% block content %}
-    <h1>{{ product.title | capitalize }}</h1>
+<div class="site_container">
+    <div class="pdp_inner">
+      <div class="product_gallery">
+        <div class="slider-for">
+        {% for image in product.images  %}
+            <div>
+            <span class="feature_img">
+            <img src="{{image}}">
+            </span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="slider-nav">
+        {% for image in product.images %}
+            <div>
+              <span class="feature_media">
+                <img src="{{image}}">
+              </span>
+            </div>
+        {% endfor %}
+        </div>
+     </div>
+
+    <div class="product_details">
+      <div class="title_price">
+        <h2>{{product.title}}</h2>
+        <p>{{product.price | money}}</p>
+      </div>
+      <h3>{{product.vendor}}</h3>
+      <p>{{product.description}}</p>
+      <ul class="product-tags">
+        <h2 class="all_h2">Tags:</h2>
+        {% for tag in product.tags %}
+        <li><a href="/collections/all/{{ tag | handleize }}">{{ tag }}</a></li>
+        {% endfor %}
+      </ul>
+      <div class="variant_div">
+      <h2 class="all_h2">select size</h2>
+        
+      
+        <select id="ad_to_cart_id" name="id">
+            {% for variant in product.variants %}
+            <option value="{{ variant.id }}"
+                {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
+            >
+                {{ variant.title }} - {{ variant.price | money }}
+            </option>
+            {% endfor %}
+        </select>
+            {{ current_variant.price | money }}
+            <div class="add_cart_div">
+            <label for="Quantity">Quantity</label>
+            <input type="number" id="Quantity" name="quantity" value="1" min="1">
+           <button name="add" aria-label="Add to cart" class="btn product-form__cart-submit btn--secondary-accent ad_to_cart" id="ad_to_cart" aria-haspopup="dialog" data-add-to-cart="">Add to Cart</button>
+       </div>
+      </div>
+
+  <script> 
+    $(document).on('click','.ad_to_cart',function(){  
+
+    var productSelect = document.getElementById('ad_to_cart_id');
+    var variantId = productSelect.options[productSelect.selectedIndex].value;
+    $.ajax({
+    type: 'POST',
+    url: '/cart/add.js',
+    data: {
+    quantity: 1,
+    id: variantId
+    },
+    dataType: 'json', 
+    success: function (data) { 
+    console.log(1);
+    alert("product is added successfully to cart");
+    } 
+    });
+    })
+</script> 
+    </div>
+
+    </div>
+</div>
+
+
+
 {% endblock %}
